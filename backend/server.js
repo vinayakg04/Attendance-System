@@ -1,26 +1,32 @@
-const app=require("./app")
-const connectDatabase=require("./config/database")
-const dotenv=require("dotenv")
+
+require('dotenv').config()
+
+const express = require("express")
+const cors = require('cors')
+const connectDB = require('./config/configDB')
 
 
+const app = express()
+const port = process.env.PORT
+const DATABASE_URL = process.env.DATABASE_URL
 
+// CORS Policy
+app.use(cors())
 
-dotenv.config({path:"backend/config/config.env"})
+// Database Connection
+connectDB(DATABASE_URL)
 
-connectDatabase()
+// JSON
+app.use(express.json())
 
-const server=app.listen(process.env.PORT,()=>{
-    console.log(`server is working on http://localhost:${process.env.PORT}`)
+// // Load Routes
+// app.use("/api/user", userRoutes)
+
+app.use(cors({
+  credentials: true,
+  origin: 'http://localhost:3000',
+}))
+
+app.listen(port, () => {
+  console.log(`Server listening at http://localhost:${port}`)
 })
-
-
-  // Unhandled Promise Rejection
-  process.on("unhandledRejection", (err) => {
-
-    console.log(`Shutting down the server due to Unhandled Promise Rejection`);
-  
-    server.close(() => {
-      process.exit(1);
-    });
-  });
-  
